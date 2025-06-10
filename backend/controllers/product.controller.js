@@ -11,6 +11,21 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
+export const getProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await sql`SELECT * FROM products WHERE id = ${id}`;
+
+    res.status(200).json({
+      success: true,
+      data: product[0],
+    });
+  } catch (error) {
+    console.error('Error in getProduct: ', error);
+    res.status(500).json({ success: false, message: 'Internal server error' + error.message });
+  }
+};
+
 export const createProduct = async (req, res) => {
   const { name, price, image, category } = req.body;
 
