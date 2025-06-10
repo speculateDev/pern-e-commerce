@@ -11,7 +11,28 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-export const getProduct = async (req, res) => {};
+export const createProduct = async (req, res) => {
+  const { name, price, image, category } = req.body;
 
-export const createProduct = async (req, res) => {};
+  if (!name || !price || !image || !category) {
+    return res.status(400).jsson({ success: false, message: 'All fields are required' });
+  }
+
+  try {
+    const newProduct =
+      await sql`INSERT INTO products (name, price, image, category) VALUES(${name}, ${price}, ${image}, ${
+        category.charAt(0).toUpperCase() + category.slice(1)
+      }) RETURNING *`;
+
+    console.log('NewProduct: ', newProduct);
+
+    return res.status(200).json({
+      success: true,
+      data: newProduct[0],
+    });
+  } catch (error) {
+    console.error('Error in createProduct: ', error);
+    res.status(500).json({ success: false, message: 'Internal server error' + error.message });
+  }
+};
 export const updateProduct = async (req, res) => {};
