@@ -3,9 +3,10 @@ import helmet from 'helmet';
 import { config } from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
+import { sql } from './config/db.js';
+import { aj } from './lib/arcjet.js';
 
 import productsRoutes from './routes/product.route.js';
-import { sql } from './config/db.js';
 
 config();
 
@@ -17,6 +18,33 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
+
+// Apply arcjet rate-limit to all routes
+app.use(async (req, res, next) => {
+  try {
+    const decision = await arcjet.protect(req, {
+      requested: 1, // each req consumes one token
+    });
+
+    if (decision.isDenied) {
+      if (decision.reason.isRateLimit()) {
+        res.status(429).json({
+          error: 'Too many requests',
+        });
+      } else if (decision.reason.isBot()) {
+        res.status(403).json({ error: 'Bot access denied' });
+      } else {
+        res.status(403).json({ error: 'Forbidden' });
+      }
+      return;
+    }
+
+    next();
+  } catch (error) {
+    console.log('Arcjet error: ', error);
+    next(error);
+  }
+});
 
 app.use('/api/products', productsRoutes);
 
