@@ -52,3 +52,44 @@ export const signup = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' + error.message });
   }
 };
+
+export const login = async (req, res) => {
+  let user;
+
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required',
+      });
+    }
+
+    user = await sql`SELECT * FROM users WHERE email = ${email}`;
+
+    user = user[0];
+
+    const isCorrectPass = await bcrypt.compare(password, user.password);
+
+    if (!user || !isCorrectPass) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+    }
+
+    const token = generateToken(user.id);
+    setCookies(res, token);
+
+    user.password = null;
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error('Error in loginController: ', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
