@@ -93,3 +93,16 @@ export const login = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie('jwt');
+    res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    });
+  } catch (error) {
+    console.log('Error in logout controller: ', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
