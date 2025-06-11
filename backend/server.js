@@ -7,6 +7,8 @@ import { sql } from './config/db.js';
 import { aj } from './lib/arcjet.js';
 
 import productsRoutes from './routes/product.route.js';
+import authRoutes from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 config();
 
@@ -14,6 +16,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
@@ -47,6 +50,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use('/api/products', productsRoutes);
+app.use('/api/auth', authRoutes);
 
 async function initDB() {
   try {
@@ -113,6 +117,8 @@ async function initDB() {
   }
 }
 
-app.listen(port, () => {
-  console.log(`Listenning on port ${port}`);
+initDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Listenning on port ${port}`);
+  });
 });
