@@ -25,7 +25,7 @@ app.use(morgan('dev'));
 // Apply arcjet rate-limit to all routes
 app.use(async (req, res, next) => {
   try {
-    const decision = await arcjet.protect(req, {
+    const decision = await aj.protect(req, {
       requested: 1, // each req consumes one token
     });
 

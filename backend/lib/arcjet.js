@@ -1,6 +1,6 @@
 import arcjet, { detectBot, shield, tokenBucket } from '@arcjet/node';
-import { isSpoofedBot } from '@arcjet/inspect';
-import http from 'node:http';
+// import { isSpoofedBot } from '@arcjet/inspect';
+// import http from 'node:http';
 import { config } from 'dotenv';
 
 config();
