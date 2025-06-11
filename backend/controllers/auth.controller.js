@@ -106,3 +106,10 @@ export const logout = (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+export const getMe = (req, res) => {
+  res.send({
+    success: true,
+    user: req.user,
+  });
+};
