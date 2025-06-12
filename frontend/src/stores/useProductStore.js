@@ -22,4 +22,21 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+
+  deleteProduct: async (id) => {
+    set({ loading: true });
+    try {
+      if (!confirm('Are you sure you want to delete?')) return;
+      await axios.delete(`/products/${id}`);
+      set((prevState) => ({
+        products: prevState.products.filter((product) => product.id !== id),
+      }));
+      toast.success('Product deleted successfully');
+    } catch (error) {
+      console.log('Error in deleteProduct: ', error);
+      toast.error('Something went wrong');
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));
