@@ -39,4 +39,23 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+
+  addProduct: async (data) => {
+    set({ loading: true });
+
+    try {
+      if (!data.image || !data.name || !data.price || !data.category)
+        return toast.error('All fields are required');
+      await axios.post(`products`, data);
+      toast.success('Product successfully created');
+      document.getElementById('add_product_modal').close();
+      await get().fetchProducts();
+    } catch (error) {
+      console.error('Error in addProduct-store: ', error);
+      toast.error('Something went wrong');
+    } finally {
+      set({ loading: false });
+      document.getElementById('add_product_modal').close();
+    }
+  },
 }));
