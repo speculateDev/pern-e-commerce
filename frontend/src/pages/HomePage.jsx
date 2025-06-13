@@ -4,6 +4,7 @@ import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from 'lucide-react';
 import AddProductModal from '../components/AddProductModal';
 import ProductCard from '../components/ProductCard';
 import { useAuthStore } from '../stores/useAuthStore';
+import FilterCategory from '../components/FilterCategory';
 
 function HomePage() {
   const { loading, products, error, fetchProducts } = useProductStore();
@@ -29,6 +30,8 @@ function HomePage() {
           <RefreshCwIcon className="size-5" />
         </button>
       </div>
+
+      <FilterCategory />
 
       {error && <div className="alert alert-error mb-8">{error}</div>}
 
