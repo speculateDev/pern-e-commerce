@@ -1,10 +1,12 @@
 import { Link, useResolvedPath } from 'react-router-dom';
-import { ShoppingCartIcon, ShoppingBagIcon } from 'lucide-react';
+import { ShoppingCartIcon, ShoppingBagIcon, CircleUserRound, LogOut } from 'lucide-react';
 import ThemeSelector from './ThemeSelector';
 import { useProductStore } from '../stores/useProductStore';
+import { useAuthStore } from '../stores/useAuthStore';
 
 function Navbar() {
   const { products } = useProductStore();
+  const { authUser, logout } = useAuthStore();
 
   const { pathname } = useResolvedPath();
   const isHomePage = pathname === '/';
@@ -17,7 +19,7 @@ function Navbar() {
           <Link to="/" className="hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2">
               <ShoppingCartIcon className="size-9 text-primary" />
-              <span className="font-semibold font-mono tracking-widest text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              <span className="hidden sm:inline font-semibold font-mono tracking-widest text-md sm:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                 POSGRESTORE
               </span>
             </div>
@@ -28,14 +30,28 @@ function Navbar() {
             <ThemeSelector />
 
             {isHomePage && (
-              <div className="indicator">
-                <div className="p-2 rounded-full hover:bg-base-200 transition-colors">
-                  <ShoppingBagIcon className="size-5" />
-                  <span className="badge badge-sm badge-primary indicator-item">
-                    {products.length}
-                  </span>
+              <>
+                <div className="indicator">
+                  <div className="p-2 rounded-full hover:bg-base-200 transition-colors">
+                    <ShoppingBagIcon className="size-5" />
+                    <span className="badge badge-sm badge-primary indicator-item">
+                      {products.length}
+                    </span>
+                  </div>
                 </div>
-              </div>
+
+                {!authUser ? (
+                  <Link className="btn btn-md btn-ghost" to={'/auth'}>
+                    <CircleUserRound />
+                    <span className="hidden sm:inline">Login</span>
+                  </Link>
+                ) : (
+                  <button className="btn btn-md btn-ghost" onClick={() => logout()}>
+                    <LogOut className="size-5" />
+                    <span className="hidden sm:inline">Logout</span>
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

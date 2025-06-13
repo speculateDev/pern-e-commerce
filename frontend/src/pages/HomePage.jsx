@@ -3,9 +3,11 @@ import { useProductStore } from '../stores/useProductStore';
 import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from 'lucide-react';
 import AddProductModal from '../components/AddProductModal';
 import ProductCard from '../components/ProductCard';
+import { useAuthStore } from '../stores/useAuthStore';
 
 function HomePage() {
   const { loading, products, error, fetchProducts } = useProductStore();
+  const { isAdmin } = useAuthStore();
 
   useEffect(() => {
     fetchProducts();
@@ -14,18 +16,21 @@ function HomePage() {
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
-        <button
-          onClick={() => document.getElementById('add_product_modal').showModal()}
-          className="btn btn-primary"
-        >
-          <PlusCircleIcon className="size-5 mr-2" />
-          Add Product
-        </button>
-
+        {isAdmin && (
+          <button
+            onClick={() => document.getElementById('add_product_modal').showModal()}
+            className="btn btn-primary"
+          >
+            <PlusCircleIcon className="size-5 mr-2" />
+            Add Product
+          </button>
+        )}
         <button className="btn btn-ghost btn-circle" onClick={fetchProducts}>
           <RefreshCwIcon className="size-5" />
         </button>
       </div>
+
+      {error && <div className="alert alert-error mb-8">{error}</div>}
 
       <AddProductModal />
 

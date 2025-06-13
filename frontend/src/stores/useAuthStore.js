@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 export const useAuthStore = create((set) => ({
   loading: false,
   authUser: null,
+  isAdmin: null,
+  checkingAuth: false,
 
   signup: async (data) => {
     set({ loading: true });
@@ -32,7 +34,7 @@ export const useAuthStore = create((set) => ({
       if (!data.email || !data.password) return toast.error('All fields are required');
 
       const res = await axios.post('/auth/login', data);
-      set({ authUser: res.data.user });
+      set({ authUser: res.data.user, isAdmin: res.data.user.role === 'admin' });
 
       toast.success('Successfully logged in');
     } catch (error) {
@@ -47,7 +49,7 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axios.post('/auth/logout');
 
-      if (res.status === 200) set({ authUser: null });
+      if (res.status === 200) set({ authUser: null, isAdmin: false });
       toast.success('Logged out successfully');
     } catch (error) {
       toast.error(error.response.data.message || 'Something went wrong');
@@ -56,15 +58,15 @@ export const useAuthStore = create((set) => ({
 
   checkAuth: async () => {
     try {
-      set({ loading: true });
+      set({ checkingAuth: true });
       const res = await axios.get('/auth/me');
 
-      set({ authUser: res.data.user });
+      set({ authUser: res.data.user, isAdmin: res.data.user.role === 'admin' });
     } catch (error) {
       // toast.error(error.response.data.message || 'Something went wrong');
       set({ authUser: null });
     } finally {
-      set({ loading: false });
+      set({ checkingAuth: false });
     }
   },
 }));

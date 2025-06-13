@@ -1,6 +1,7 @@
 import { EditIcon, Trash2Icon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useProductStore } from '../stores/useProductStore';
+import { useAuthStore } from '../stores/useAuthStore';
 
 function ProductCard({ product }) {
   const { deleteProduct } = useProductStore();
@@ -9,6 +10,7 @@ function ProductCard({ product }) {
     if (!confirm('Are you sure you want to delete?')) return;
     deleteProduct(product.id);
   }
+  const { isAdmin } = useAuthStore();
 
   return (
     <div className="card overflow-hidden bg-base-100 shadow-2xl hover:shadow-2xl transition-shadow duration-300">
@@ -28,28 +30,21 @@ function ProductCard({ product }) {
         {/* PRODUCT INFO */}
         <h2 className="card-title text-lg font-semibold">{product.name}</h2>
         <p className="text-2xl font-bold text-primary">${Number(product.price).toFixed(2)}</p>
-
         {/* CARD ACTIONS */}
-        <div className="card-actions justify-end mt-4">
-          <Link to={`/products/${product.id}`} className="btn btn-sm btn-info btn-outline">
-            <EditIcon className="size-4" />
-          </Link>
+        {isAdmin && (
+          <div className="card-actions justify-end mt-4">
+            <Link to={`/products/${product.id}`} className="btn btn-sm btn-info btn-outline">
+              <EditIcon className="size-4" />
+            </Link>
 
-<<<<<<< Updated upstream
-          <button
-            className="btn btn-sm btn-error btn-outline"
-            onClick={() => deleteProduct(product.id)}
-          >
-            <Trash2Icon className="size-4" />
-          </button>
-        </div>
-=======
-            <button className="btn btn-sm btn-error btn-outline" onClick={handleDelete}>
+            <button
+              className="btn btn-sm btn-error btn-outline"
+              onClick={() => deleteProduct(product.id)}
+            >
               <Trash2Icon className="size-4" />
             </button>
           </div>
         )}
->>>>>>> Stashed changes
       </div>
     </div>
   );
