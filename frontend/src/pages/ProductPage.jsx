@@ -34,6 +34,7 @@ function ProductPage() {
   }, [currentProduct]);
 
   async function handleDelete() {
+    if (!confirm('Are you sure you want to delete the product?')) return;
     await deleteProduct(id);
     navigate('/');
   }

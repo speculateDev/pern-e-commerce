@@ -42,7 +42,6 @@ export const useProductStore = create((set, get) => ({
   deleteProduct: async (id) => {
     set({ loading: true });
     try {
-      if (!confirm('Are you sure you want to delete the product?')) return;
       await axios.delete(`/products/${id}`);
       set((prevState) => ({
         products: prevState.products.filter((product) => product.id !== id),
