@@ -1,18 +1,19 @@
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useThemeStore } from './stores/useThemeStore';
+import { useAuthStore } from './stores/useAuthStore';
 import ProductPage from './pages/ProductPage';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
+import CheckingAuthSpinner from './components/CheckingAuthSpinner';
 
 import Navbar from './components/Navbar';
 import { THEMES } from './constants';
-import { useEffect } from 'react';
-import { useAuthStore } from './stores/useAuthStore';
 
 function App() {
   const { theme } = useThemeStore();
-  const { checkAuth, authUser } = useAuthStore();
+  const { checkAuth, authUser, checkingAuth } = useAuthStore();
 
   // Get toastStyling
   const currentTheme = THEMES.find((t) => theme === t.name);
@@ -24,6 +25,8 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  if (checkingAuth) return <CheckingAuthSpinner />;
 
   return (
     <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme={theme}>
