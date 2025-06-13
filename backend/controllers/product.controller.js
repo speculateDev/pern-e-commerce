@@ -30,7 +30,7 @@ export const createProduct = async (req, res) => {
   const { name, price, image, category } = req.body;
 
   if (!name || !price || !image || !category) {
-    return res.status(400).jsson({ success: false, message: 'All fields are required' });
+    return res.status(400).json({ success: false, message: 'All fields are required' });
   }
 
   try {
@@ -38,8 +38,6 @@ export const createProduct = async (req, res) => {
       await sql`INSERT INTO products (name, price, image, category) VALUES(${name}, ${price}, ${image}, ${
         category.charAt(0).toUpperCase() + category.slice(1)
       }) RETURNING *`;
-
-    console.log('NewProduct: ', newProduct);
 
     return res.status(200).json({
       success: true,
@@ -77,8 +75,6 @@ export const deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
     const deletedProduct = await sql`DELETE FROM products WHERE id = ${id} RETURNING *;`;
-
-    console.log(deletedProduct);
 
     if (deletedProduct.length === 0) {
       return res.status(404).json({
