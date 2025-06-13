@@ -24,4 +24,22 @@ export const useAuthStore = create((set) => ({
       set({ loading: false });
     }
   },
+
+  login: async (data) => {
+    try {
+      set({ loading: true });
+
+      if (!data.email || !data.password) return toast.error('All fields are required');
+
+      const res = await axios.post('/auth/login', data);
+      set({ authUser: res.data.user });
+
+      toast.success('Successfully logged in');
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || 'Wrong credentials');
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));
