@@ -4,16 +4,19 @@ import toast from 'react-hot-toast';
 
 export const useProductStore = create((set, get) => ({
   // Products state
+  allProducts: [],
   products: [],
   loading: false,
   error: null,
+  category: null,
+  currentProduct: null,
 
   fetchProducts: async () => {
     set({ loading: true });
 
     try {
       const res = await axios.get('/products');
-      set({ products: res.data.data, error: null });
+      set({ products: res.data.data, error: null, allProducts: res.data.data });
     } catch (error) {
       if (error.status === 429) set({ error: 'Rate limit exceeded' });
       else set({ error: 'Something went wrong' });
@@ -23,10 +26,23 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  fetchProduct: async (id) => {
+    set({ loading: true });
+
+    try {
+      const res = await axios.get(`/products/${id}`);
+      set({ currentProduct: res.data.data });
+    } catch (error) {
+      console.error('Error in fetchProduct: ', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   deleteProduct: async (id) => {
     set({ loading: true });
     try {
-      if (!confirm('Are you sure you want to delete?')) return;
+      if (!confirm('Are you sure you want to delete the product?')) return;
       await axios.delete(`/products/${id}`);
       set((prevState) => ({
         products: prevState.products.filter((product) => product.id !== id),
@@ -57,5 +73,22 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
       document.getElementById('add_product_modal').close();
     }
+  },
+
+  filter: (category) => {
+    set({ loading: true });
+    const currentState = get();
+
+    if (category === currentState.category) {
+      set({ category: null, products: get().allProducts, loading: false });
+      return;
+    }
+
+    set({
+      category: category,
+      products: currentState.allProducts.filter((prod) => prod.category === category),
+    });
+
+    set({ loading: false });
   },
 }));
