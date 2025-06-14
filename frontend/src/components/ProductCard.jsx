@@ -10,7 +10,7 @@ function ProductCard({ product }) {
     if (!confirm('Are you sure you want to delete?')) return;
     deleteProduct(product.id);
   }
-  const { isAdmin } = useAuthStore();
+  const { isAdmin, authUser } = useAuthStore();
 
   return (
     <div className="card overflow-hidden bg-base-100 shadow-2xl hover:shadow-2xl transition-shadow duration-300">
@@ -37,14 +37,13 @@ function ProductCard({ product }) {
               <EditIcon className="size-4" />
             </Link>
 
-            <button
-              className="btn btn-sm btn-error btn-outline"
-              onClick={() => deleteProduct(product.id)}
-            >
+            <button className="btn btn-sm btn-error btn-outline" onClick={handleDelete}>
               <Trash2Icon className="size-4" />
             </button>
           </div>
         )}
+
+        {authUser && <button className="btn btn-primary mt-6">Add to cart</button>}
       </div>
     </div>
   );
