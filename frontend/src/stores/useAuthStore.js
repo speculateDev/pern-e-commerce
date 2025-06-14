@@ -6,7 +6,7 @@ export const useAuthStore = create((set) => ({
   loading: false,
   authUser: null,
   isAdmin: null,
-  checkingAuth: false,
+  checkingAuth: true,
 
   signup: async (data) => {
     set({ loading: true });
@@ -38,7 +38,7 @@ export const useAuthStore = create((set) => ({
 
       toast.success('Successfully logged in');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response?.data?.message || 'Wrong credentials');
     } finally {
       set({ loading: false });

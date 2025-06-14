@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import helmet from 'helmet';
 import { config } from 'dotenv';
@@ -14,17 +15,25 @@ config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: 'http://localhost:5173',
     credentials: true,
   })
 );
-app.use(helmet());
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+
 app.use(morgan('dev'));
 
 // Apply arcjet rate-limit to all routes
@@ -59,6 +68,14 @@ app.use(morgan('dev'));
 
 app.use('/api/products', productsRoutes);
 app.use('/api/auth', authRoutes);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
+  app.get('{/*path}', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+  });
+}
 
 async function initDB() {
   try {
