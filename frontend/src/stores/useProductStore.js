@@ -74,6 +74,22 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  updateProduct: async (id, data) => {
+    set({ loading: true });
+
+    try {
+      const res = await axios.put(`/products/${id}`, data);
+
+      set({ currentProduct: res.data.data });
+      toast.success('Product updated successfully');
+    } catch (error) {
+      toast.error('Something went wrong');
+      console.log('Error in updateProduct: ', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   filter: (category) => {
     set({ loading: true });
     const currentState = get();
