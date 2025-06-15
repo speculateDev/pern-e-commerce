@@ -6,6 +6,7 @@ export const useProductStore = create((set, get) => ({
   // Products state
   allProducts: [],
   products: [],
+  featuredProducts: [],
   loading: false,
   error: null,
   category: null,
@@ -105,5 +106,17 @@ export const useProductStore = create((set, get) => ({
     });
 
     set({ loading: false });
+  },
+
+  getFeaturedProducts: async () => {
+    try {
+      set({ loading: true });
+      const res = await axios.get('/products/featured');
+      set({ featuredProducts: res.data });
+    } catch (error) {
+      toast.error(error.response.message || 'Something went wrong');
+    } finally {
+      set({ loading: false });
+    }
   },
 }));
