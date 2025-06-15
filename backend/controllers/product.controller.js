@@ -92,3 +92,27 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' + error.message });
   }
 };
+
+export const getFeaturedProducts = async (req, res) => {
+  try {
+    const featured = await sql`
+      SELECT * FROM products 
+      ORDER BY RANDOM()
+      LIMIT 6
+      `;
+
+    if (!featured) {
+      return res.status(404).json({
+        message: 'No featured product found',
+      });
+    }
+
+    res.status(200).json(featured);
+  } catch (error) {
+    console.error('Error in getFeaturedProducts: ', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
