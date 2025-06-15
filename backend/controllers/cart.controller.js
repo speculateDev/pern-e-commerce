@@ -96,3 +96,63 @@ export const updateQuantity = async (req, res) => {
     });
   }
 };
+
+export const getCartProducts = async (req, res) => {
+  try {
+    const cartItems = req.user.cartitems;
+    const productIds = cartItems.map((item) => item.productId).filter((id) => id && !isNaN(id));
+
+    if (productIds.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const products = await sql`
+      SELECT * FROM products 
+      WHERE id = ANY(${productIds})
+    `;
+
+    const productsWithQuantities = products.map((product) => {
+      const cartItem = cartItems.find((item) => +item.productId === +product.id);
+
+      return {
+        ...product,
+        quantity: cartItem.quantity,
+      };
+    });
+
+    res.status(200).json(productsWithQuantities);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
+
+// export const removeFromCart = async (req, res) => {
+//   try {
+//     const productId = req.body?.productId;
+//     const user = req.user;
+
+//     let cartItems = req.user.cartitems;
+
+//     if (!productId) {
+//       cartItems = [];
+//     } else {
+//       cartItems = cartItems.filter((item) => +item.productId !== +productId);
+//     }
+
+//     const updatedUser = await sql`
+//       UPDATE users
+//       SET cartitems = ${JSON.stringify(cartItems)}
+//       WHERE id = ${user.id} RETURNING *;
+//     `;
+
+//     res.json(updatedUser[0].cartitems);
+//   } catch (error) {
+//     res.status(500).json({
+//       error: error.message,
+//       message: 'Server error',
+//     });
+//   }
+// };
