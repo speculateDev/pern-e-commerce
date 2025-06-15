@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -9,7 +10,7 @@ import { sql } from './config/db.js';
 
 import productsRoutes from './routes/product.route.js';
 import authRoutes from './routes/auth.route.js';
-import cookieParser from 'cookie-parser';
+import cartRoutes from './routes/cart.route.js';
 
 config();
 
@@ -34,7 +35,7 @@ app.use(
   })
 );
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 
 // Apply arcjet rate-limit to all routes
 // app.use(async (req, res, next) => {
@@ -68,6 +69,7 @@ app.use(morgan('dev'));
 
 app.use('/api/products', productsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/dist')));
@@ -97,7 +99,8 @@ async function initDB() {
             email VARCHAR(255) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            role VARCHAR(50) NOT NULL DEFAULT 'user'
+            role VARCHAR(50) NOT NULL DEFAULT 'user',
+            cartItems JSONB DEFAULT '[]'
         )
 <<<<<<< Updated upstream
 =======
@@ -135,6 +138,26 @@ async function initDB() {
         total_price DECIMAL(10, 2)
       )
 >>>>>>> Stashed changes
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS orders (
+       id SERIAL PRIMARY KEY,
+       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+       order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       total_amount DECIMAL(10, 2)
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS order_items(
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER REFERENCES orders(id),
+        product_id INTEGER REFERENCES products(id),
+        quantity INTEGER NOT NULL,
+        unit_price DECIMAL(10, 2),
+        total_price DECIMAL(10, 2)
+      )
     `;
 
     console.log('DB init');
