@@ -8,6 +8,7 @@ import AuthPage from './pages/AuthPage';
 import CheckingAuthSpinner from './components/CheckingAuthSpinner';
 
 import ProductPage from './pages/ProductPage';
+import CartPage from './pages/CartPage';
 
 import Navbar from './components/Navbar';
 import { THEMES } from './constants';
@@ -40,6 +41,7 @@ function App() {
           path="/products/:id"
           element={isAdmin ? <ProductPage /> : <Navigate to="/auth" />}
         />
+        <Route path="/cart" element={!authUser ? <Navigate to="/" /> : <CartPage />} />
       </Routes>
 
       <Toaster

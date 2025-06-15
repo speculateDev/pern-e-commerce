@@ -1,12 +1,19 @@
+import { useEffect } from 'react';
 import { Link, useResolvedPath } from 'react-router-dom';
 import { ShoppingCartIcon, ShoppingBagIcon, CircleUserRound, LogOut } from 'lucide-react';
 import ThemeSelector from './ThemeSelector';
 import { useProductStore } from '../stores/useProductStore';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useCartStore } from '../stores/useCartStore';
 
 function Navbar() {
   const { products } = useProductStore();
   const { authUser, logout } = useAuthStore();
+  const { cart, getCartItems } = useCartStore();
+
+  useEffect(() => {
+    getCartItems();
+  }, [getCartItems]);
 
   const { pathname } = useResolvedPath();
   const isHomePage = pathname === '/';
@@ -29,8 +36,8 @@ function Navbar() {
           <div className="flex items-center gap-4">
             <ThemeSelector />
 
-            {isHomePage && (
-              <>
+            <>
+              {isHomePage && (
                 <div className="indicator">
                   <div className="p-2 rounded-full hover:bg-base-200 transition-colors">
                     <ShoppingBagIcon className="size-5" />
@@ -39,20 +46,31 @@ function Navbar() {
                     </span>
                   </div>
                 </div>
+              )}
 
-                {!authUser ? (
-                  <Link className="btn btn-md btn-ghost" to={'/auth'}>
-                    <CircleUserRound />
-                    <span className="hidden sm:inline">Login</span>
-                  </Link>
-                ) : (
-                  <button className="btn btn-md btn-ghost" onClick={() => logout()}>
-                    <LogOut className="size-5" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </button>
-                )}
-              </>
-            )}
+              {authUser && (
+                <Link className="indicator cursor-pointer" to="/cart">
+                  <div className="p-2 rounded-full hover:bg-gray-300/10 transition-colors">
+                    <ShoppingCartIcon className="size-5" />
+                    <span className="badge badge-sm badge-error indicator-item">
+                      {cart.length}
+                    </span>
+                  </div>
+                </Link>
+              )}
+
+              {!authUser ? (
+                <Link className="btn btn-md btn-ghost" to={'/auth'}>
+                  <CircleUserRound />
+                  <span className="hidden sm:inline">Login</span>
+                </Link>
+              ) : (
+                <button className="btn btn-md btn-ghost" onClick={() => logout()}>
+                  <LogOut className="size-5" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              )}
+            </>
           </div>
         </div>
       </div>
