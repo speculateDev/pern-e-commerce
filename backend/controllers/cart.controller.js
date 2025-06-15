@@ -129,30 +129,30 @@ export const getCartProducts = async (req, res) => {
   }
 };
 
-// export const removeFromCart = async (req, res) => {
-//   try {
-//     const productId = req.body?.productId;
-//     const user = req.user;
+export const removeFromCart = async (req, res) => {
+  try {
+    const productId = req.body?.productId;
+    const user = req.user;
 
-//     let cartItems = req.user.cartitems;
+    let cartItems = req.user.cartitems;
 
-//     if (!productId) {
-//       cartItems = [];
-//     } else {
-//       cartItems = cartItems.filter((item) => +item.productId !== +productId);
-//     }
+    if (!productId) {
+      cartItems = [];
+    } else {
+      cartItems = cartItems.filter((item) => +item.productId !== +productId);
+    }
 
-//     const updatedUser = await sql`
-//       UPDATE users
-//       SET cartitems = ${JSON.stringify(cartItems)}
-//       WHERE id = ${user.id} RETURNING *;
-//     `;
+    const updatedUser = await sql`
+      UPDATE users
+      SET cartitems = ${JSON.stringify(cartItems)}
+      WHERE id = ${user.id} RETURNING *;
+    `;
 
-//     res.json(updatedUser[0].cartitems);
-//   } catch (error) {
-//     res.status(500).json({
-//       error: error.message,
-//       message: 'Server error',
-//     });
-//   }
-// };
+    res.json(updatedUser[0].cartitems);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: 'Server error',
+    });
+  }
+};
