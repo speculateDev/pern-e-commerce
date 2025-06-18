@@ -52,4 +52,20 @@ export const useCartStore = create((set, get) => ({
 
     set({ total });
   },
+
+  removeFromCart: async (productId) => {
+    try {
+      if (productId && !confirm('Are you sure you want to delete the product?')) return;
+
+      await axios.delete('/cart', { data: { productId } });
+
+      set((prevState) => ({
+        cart: productId ? prevState.cart.filter((item) => item.id !== productId) : [],
+      }));
+
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
 }));
