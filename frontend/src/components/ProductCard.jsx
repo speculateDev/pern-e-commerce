@@ -2,9 +2,11 @@ import { EditIcon, Trash2Icon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useProductStore } from '../stores/useProductStore';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useCartStore } from '../stores/useCartStore';
 
 function ProductCard({ product }) {
   const { deleteProduct } = useProductStore();
+  const { addToCart } = useCartStore();
 
   function handleDelete() {
     if (!confirm('Are you sure you want to delete?')) return;
@@ -43,7 +45,11 @@ function ProductCard({ product }) {
           </div>
         )}
 
-        {authUser && <button className="btn btn-primary mt-6">Add to cart</button>}
+        {authUser && (
+          <button onClick={() => addToCart(product)} className="btn btn-primary mt-6">
+            Add to cart
+          </button>
+        )}
       </div>
     </div>
   );
