@@ -1,9 +1,29 @@
 import { Link } from 'react-router-dom';
 import { MoveRight } from 'lucide-react';
 import { useCartStore } from '../stores/useCartStore';
+import { loadStripe } from '@stripe/stripe-js';
+import { axios } from '../lib/axios';
 
 function OrderSummary() {
-  const { total } = useCartStore();
+  const { total, cart } = useCartStore();
+
+  async function handlePayment() {
+    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+    const res = await axios.post('/payment/create-checkout-session', {
+      products: cart,
+    });
+
+    const session = res.data;
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+
+    if (result.error) {
+      console.error('Error: ', result.error);
+    }
+  }
 
   return (
     <div className="max-w-4xl flex-1 space-y-6">
@@ -17,7 +37,10 @@ function OrderSummary() {
             <dt className="text-base text-primary font-bold">${total}</dt>
           </dl>
 
-          <button className="btn w-full btn-primary text-sm hover:scale-105">
+          <button
+            onClick={handlePayment}
+            className="btn w-full btn-primary text-sm hover:scale-105"
+          >
             Proceed to checkout
           </button>
 
