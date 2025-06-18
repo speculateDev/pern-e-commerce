@@ -68,4 +68,25 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message);
     }
   },
+
+  updateQuantity: async (productId, quantity) => {
+    try {
+      if (quantity === 0) {
+        get().removeFromCart(productId);
+        return;
+      }
+
+      await axios.put(`/cart/${productId}`, { quantity });
+
+      set((prevState) => ({
+        cart: prevState.cart.map((item) =>
+          item.id === productId ? { ...item, quantity } : item
+        ),
+      }));
+
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
 }));
