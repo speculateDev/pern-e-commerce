@@ -109,7 +109,8 @@ async function initDB() {
        id SERIAL PRIMARY KEY,
        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       total_amount DECIMAL(10, 2)
+       total_amount DECIMAL(10, 2),
+       stripe_session_id VARCHAR(250)
       )
     `;
 
