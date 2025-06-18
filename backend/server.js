@@ -11,6 +11,7 @@ import { sql } from './config/db.js';
 import productsRoutes from './routes/product.route.js';
 import authRoutes from './routes/auth.route.js';
 import cartRoutes from './routes/cart.route.js';
+import paymentRoutes from './routes/payment.route.js';
 
 config();
 
@@ -70,6 +71,7 @@ if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 app.use('/api/products', productsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/payment', paymentRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/dist')));
