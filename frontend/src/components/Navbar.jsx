@@ -12,8 +12,8 @@ function Navbar() {
   const { cart, getCartItems } = useCartStore();
 
   useEffect(() => {
-    getCartItems();
-  }, [getCartItems]);
+    if (authUser) getCartItems();
+  }, [getCartItems, authUser]);
 
   const { pathname } = useResolvedPath();
   const isHomePage = pathname === '/';
