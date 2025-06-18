@@ -44,4 +44,12 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message || 'Something went wrong');
     }
   },
+
+  calculateTotals: async () => {
+    const { cart } = get();
+    let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    total = total.toFixed(2);
+
+    set({ total });
+  },
 }));
