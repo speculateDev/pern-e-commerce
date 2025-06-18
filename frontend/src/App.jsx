@@ -9,6 +9,8 @@ import CheckingAuthSpinner from './components/CheckingAuthSpinner';
 
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
+import PurchaseSuccessPage from './pages/PurchaseSuccessPage';
+import PurchaseCancelPage from './pages/PurchaseCancelPage';
 
 import Navbar from './components/Navbar';
 import { THEMES } from './constants';
@@ -41,7 +43,15 @@ function App() {
           path="/products/:id"
           element={isAdmin ? <ProductPage /> : <Navigate to="/auth" />}
         />
-        <Route path="/cart" element={!authUser ? <Navigate to="/" /> : <CartPage />} />
+        <Route path="/cart" element={authUser ? <CartPage /> : <Navigate to="/auth" />} />
+        <Route
+          path="/purchase-success"
+          element={authUser ? <PurchaseSuccessPage /> : <Navigate to="/auth" />}
+        />
+        <Route
+          path="/purchase-cancel"
+          element={authUser ? <PurchaseCancelPage /> : <Navigate to="/auth" />}
+        />
       </Routes>
 
       <Toaster
