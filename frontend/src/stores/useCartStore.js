@@ -21,4 +21,27 @@ export const useCartStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+
+  addToCart: async (product) => {
+    try {
+      await axios.post('/cart', { productId: product.id });
+      toast.success('product added to cart');
+
+      set((prevState) => {
+        const existingItem = prevState.cart.find((item) => item.id === product.id);
+
+        const newCart = existingItem
+          ? prevState.cart.map((item) =>
+              item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+            )
+          : [...prevState.cart, { quantity: 1, ...product }];
+
+        return { cart: newCart };
+      });
+
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message || 'Something went wrong');
+    }
+  },
 }));
