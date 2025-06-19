@@ -25,9 +25,11 @@ function CartPage() {
     );
 
   return (
-    <div className="container mx-auto py-8 md:py-16">
+    <div className="container mx-auto py-8 md:py-16 px-4">
       <div className="md:gap-6 xl:gap-8 lg:flex mt-6 sm:mt-8">
-        <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+        {cart.length > 0 && <OrderSummary />}
+
+        <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl mb-6 lg:mb-0">
           <div className="space-y-6">
             {cart.map((item) => (
               <CartItem key={item.id} item={item} />
@@ -36,8 +38,6 @@ function CartPage() {
 
           <PeopleAlsoBought />
         </div>
-
-        <OrderSummary />
       </div>
     </div>
   );

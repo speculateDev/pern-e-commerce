@@ -26,7 +26,7 @@ function OrderSummary() {
   }
 
   return (
-    <div className="max-w-4xl flex-1 space-y-6">
+    <div className="max-w-4xl flex-1 space-y-6 lg:order-2 mb-7 lg:mb-0">
       <div className="space-y-4 rounded-lg border border-neutral-content/30 bg-neutral p-4 sm:p-6">
         <p className="text-primary font-semibold text-2xl">Order Summary</p>
 
